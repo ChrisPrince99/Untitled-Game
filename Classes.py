@@ -51,14 +51,14 @@ class Player:
             self.exp = 0
             self.exptolvl = 1
 
-    def save_game(self, player, backpack, stashbox):
-        with open("savefile.dat", 'wb') as save_file:
+    def save_game(self, save_name, player, backpack, stashbox):
+        with open("{}.dat".format(save_name), 'wb') as save_file:
             pickle.dump([player.name, player.level, player.health, player.mana, player.exptolvl, player.gold,
                          player.str, player.int, player.end, player.wis, player.dex, backpack.name, backpack.size,
                          backpack.backpack, stashbox.stash, stashbox.size, stashbox.name], save_file, protocol=2)
 
-    def load_game(self, player, backpack, stashbox):
-        with open('savefile.dat', 'rb') as load_file:
+    def load_game(self, save_name, player, backpack, stashbox):
+        with open('{}.dat'.format(save_name), 'rb') as load_file:
             player.name, player.level, player.health, player.mana, player.exptolvl, player.gold, \
                 player.str, player.int, player.end, player.wis, player.dex, \
                 backpack.name, backpack.size, backpack.backpack, stashbox.stash, \

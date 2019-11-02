@@ -41,9 +41,12 @@ class UntitledGameApp(App):
         self.root = Builder.load_file('main.kv')
         return self.root
 
-    def press_new_game(self, name):
+    def press_new_game(self, name, save_name):
         self.root.ids.game_box.clear_widgets()
         player = Player(name)
+        player_backpack = BackPack("Basic Bag", 10)
+        player_stash = StashBox("Chest", 20)
+        player.save_game(save_name, player, player_backpack, player_stash)
 
     def press_load(self):
         pass
