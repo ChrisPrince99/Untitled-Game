@@ -1,5 +1,76 @@
 BoxLayout:
     orientation: 'vertical'
+    id: main_box
+    Popup:
+        id: new_game_choice
+        # uncomment the line below for a popup that's not full screen/window
+        size_hint: (.7, .7)
+        title: "Begin a new game: "
+        on_parent:
+            # Make popup disappear immediately
+            if self.parent == main_box: self.parent.remove_widget(self)
+        BoxLayout:
+            # layout for input fields and action buttons
+            id: inputs
+            orientation: 'vertical'
+            Label:
+                text: 'Character Name: '
+                size_hint_y: None
+                height: '48dp'
+            TextInput:
+                id: added_name
+                value: ''
+                size_hint_y: None
+                height: '48dp'
+                # the next two lines make it so that pressing Tab moves the cursor
+                # to the next input field instead of entering the Tab character
+                multiline: False
+                write_tab: False
+            Label:
+                text: 'Please Input A Save Name without a file extension: E.G "File_name" not "File_name.dat"'
+                size_hint_y: None
+                height: '48dp'
+            TextInput:
+                id: save_name
+                value: ''
+                size_hint_y: None
+                height: '48dp'
+                multiline: False
+                write_tab: False
+            Button:
+                text: 'Start Game'
+                on_release: app.press_start_game(added_name.text, save_name.text)
+            Button:
+                text: 'Cancel'
+                on_release: app.press_cancel()
+            Label:
+                # this is a different Label than the main GUI screen,
+                # but uses the same string data
+#                text: app.status_text
     BoxLayout:
-        orientation: 'horizontal'
+        orientation: 'vertical'
         id: game_box
+        ScrollView:
+            size_hint_y: 7.5
+            do_scroll_x: False
+            do_scroll_y: True
+            BoxLayout:
+                Label:
+                    text: app.current_scene
+        BoxLayout:
+            orientation: 'horizontal'
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_x: 0.3
+                Button:
+                    text: 'New Game'
+                    on_release: app.press_new_game()
+                Button:
+                    text: 'Load Game'
+                    on_release: app.press_load()
+
+    GridLayout:
+        orientation: 'horizontal'
+        cols: 6
+        rows: 3
+        id: button_box
