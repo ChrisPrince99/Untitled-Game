@@ -8,21 +8,19 @@ Brief Project Description: My first ever attempt at making a game, yet to be giv
 
 __author__ = "Christopher J Prince"
 
+import logging
 import os
 import sys
-import logging
-import world_building
-from kivy.resources import resource_add_path, resource_find
+# import world_building
+from datetime import datetime
+
 from kivy.app import App
 from kivy.lang import Builder
-from kivy.uix.button import Button
 from kivy.properties import StringProperty
-from kivy.properties import ListProperty
-from kivy.properties import BooleanProperty, ObjectProperty
-from kivy.core.window import Window
-from datetime import datetime
-from Classes import Player
+from kivy.resources import resource_add_path
+
 from Classes import BackPack
+from Classes import Player
 from Classes import StashBox
 
 
@@ -32,11 +30,15 @@ class UntitledGameApp(App):
     LOG_FILENAME = "{}.log".format(DATE)
     logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG)
 
-    def __init__(self, **kwargs):
+    def __init__(self, player=Player(), player_backpack=BackPack(), player_stash=StashBox(), **kwargs):
         """
         Construct the game app class
         """
         super().__init__(**kwargs)
+        self.player = player
+        self.player_backpack = player_backpack
+        self.player_stash = player_stash
+        self.game_started = False
         # self.
 
     def build(self):
@@ -57,20 +59,30 @@ class UntitledGameApp(App):
         self.player_backpack = BackPack("Basic Bag", 10)
         self.player_stash = StashBox("Chest", 20)
         self.player.save_game(save_name, self.player, self.player_backpack, self.player_stash)
-        self.root.ids.popup.dismiss()
-        self.clear_fields()
+        self.game_started = True
+        self.press_cancel()
 
-    def press_load(self, save_name):
-        self.player.load_game(save_name, self.player, self.player_backpack, self.player_stash)
+    def press_load(self):
+        self.root.ids.load_game_choice.open()
+
+    def press_load_game(self, save_name):
+        try:
+            self.player.load_game(save_name, self.player, self.player_backpack, self.player_stash)
+        except Exception as e:
+            logging.exception("Load failed. Error: %s", e)
+        self.root.ids.game_box.clear_widgets()
+        self.game_started = True
+        self.press_cancel()
 
     def press_save(self, save_name):
         self.player.save_game(save_name, self.player, self.player_backpack, self.player_stash)
 
     def on_stop(self):
-        try:
-            self.player.save_game("Autosave", self.player, self.player_backpack, self.player_stash)
-        except Exception as e:
-            logging.exception("main crashed. Error: %s", e)
+        if self.game_started:
+            try:
+                self.player.save_game("Autosave", self.player, self.player_backpack, self.player_stash)
+            except Exception as e:
+                logging.exception("main crashed. Error: %s", e)
 
     def clear_fields(self):
         """
@@ -79,16 +91,21 @@ class UntitledGameApp(App):
         :return: None
         """
         self.root.ids.added_name.text = ""
-        self.root.ids.added_number.text = ""
+        self.root.ids.save_name.text = ""
 
     def press_cancel(self):
         """
         Handler for pressing cancel in the add entry popup
         :return: None
         """
-        self.root.ids.popup.dismiss()
+        self.root.ids.new_game_choice.dismiss()
+        self.root.ids.load_game_choice.dismiss()
         self.clear_fields()
         # self.status_text = ""
+
+    def clear_all(self):
+        """Clear all of the widgets that are children of the "entries_box" layout widget."""
+        self.root.ids.entries_box.clear_widgets()
 
 
 if __name__ == '__main__':

@@ -39,14 +39,43 @@ BoxLayout:
                 write_tab: False
             Button:
                 text: 'Start Game'
+                on_release: app.press_load_game(added_name.text, save_name.text)
+            Button:
+                text: 'Cancel'
+                on_release: app.press_cancel()
+#            Label:
+#                # this is a different Label than the main GUI screen,
+#                # but uses the same string data
+#                text: app.status_text
+    Popup:
+        id: load_game_choice
+        # uncomment the line below for a popup that's not full screen/window
+        size_hint: (.7, .7)
+        title: "Begin a new game: "
+        on_parent:
+            # Make popup disappear immediately
+            if self.parent == main_box: self.parent.remove_widget(self)
+        BoxLayout:
+            # layout for input fields and action buttons
+            id: inputs
+            orientation: 'vertical'
+            Label:
+                text: 'Please Input A Save Name without a file extension: E.G "File_name" not "File_name.dat"'
+                size_hint_y: None
+                height: '48dp'
+            TextInput:
+                id: save_name
+                value: ''
+                size_hint_y: None
+                height: '48dp'
+                multiline: False
+                write_tab: False
+            Button:
+                text: 'Start Game'
                 on_release: app.press_start_game(added_name.text, save_name.text)
             Button:
                 text: 'Cancel'
                 on_release: app.press_cancel()
-            Label:
-                # this is a different Label than the main GUI screen,
-                # but uses the same string data
-#                text: app.status_text
     BoxLayout:
         orientation: 'vertical'
         id: game_box
@@ -71,6 +100,7 @@ BoxLayout:
 
     GridLayout:
         orientation: 'horizontal'
+        size_hint_y: 0.35
         cols: 6
         rows: 3
         id: button_box
